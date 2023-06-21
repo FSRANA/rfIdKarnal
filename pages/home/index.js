@@ -46,7 +46,7 @@ const Home = () => {
     };
 
     const getScanList = () => {
-        alert(selectedDate);
+        // alert(selectedDate);
         setIsLoading(true);
         setClientToken(token);
         setIsListLoading(true);
