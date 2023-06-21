@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "scheme": "acme",
+    "web": {
+      "bundler": "metro"
+    },
+    "name": "Scanner",
+    "slug": "rfid-scanner-karnal-1",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "backgroundColor": "#fff",
+      "resizeMode": "contain"
+    },
+    "icon": "./assets/images/rfid.png"
+    
+  }
+}
