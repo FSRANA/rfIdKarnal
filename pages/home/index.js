@@ -27,7 +27,9 @@ const Home = () => {
     const token = useSelector((state) => state.user.token);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [selectedDate, setSelectedDate] = useState('');
+    const currentDate = moment().format('DD-MM-YY');
 
+    const [showdateSelected, setshowdateSelected] = useState(currentDate);
     const attemptLogout = async () => {
         dispatch({ type: 'user/setUserData', payload: "" });
         dispatch({ type: 'user/setToken', payload: "" });
@@ -36,45 +38,52 @@ const Home = () => {
     }
 
     const handleConfirm = (date) => {
+        console.log(date.toISOString().split('T')[0]);
+        setSelectedDate(date.toISOString().split('T')[0]); // Set the selected date
+        getScanList(date.toISOString().split('T')[0]);
         setDatePickerVisibility(false);
-        if (date !== undefined) {
-            setSelectedDate(date.toISOString().split('T')[0]);
-            getScanList();
-        }
+        const adjustedDate = moment(date); // Add 1 day to the selected date
+        const formattedDate = adjustedDate.format('DD-MM-YY');
+        setshowdateSelected(formattedDate);
+        // }
         // Process the selected date
         // You can update your state or perform any other actions here
     };
 
-    const getScanList = () => {
-        // alert(selectedDate);
+    const getScanList = (dateUserSelect) => {
+        if (!dateUserSelect) { // Check if selectedDate is empty or undefined
+            dateUserSelect = currentDate; // Set the current date as selectedDate
+        } else {
+        }
+        //  alert(dateUserSelect);
         setIsLoading(true);
         setClientToken(token);
         setIsListLoading(true);
         // console.log(token);
-        API.get(`drivers/scans?page=${nextpage}&created_at=${selectedDate}`, {
+        API.get(`drivers/scans?page=${nextpage}&created_at=${dateUserSelect}`, {
         }).then(function (response) {
             setScanlist([]);
-                const originalString = response.data.data.next_page_url;
-                if (originalString != null) {
-                    const explodedArray = originalString.split('?page=');
-                    if (explodedArray[1] !== undefined) {
-                        setNextpage(explodedArray[1]);
-                        if (scanlist === undefined) {
-                            setScanlist(response.data.data.data);
-                            console.log(response.data.data.data);
-                        } else {
-                            const mergedArray = [...scanlist, ...response.data.data.data];
-                            const uniqueArray = mergedArray.filter((obj, index, self) => {
-                                return index === self.findIndex((o) => o.id === obj.id);
-                            });
-                            setScanlist(uniqueArray);
+            const originalString = response.data.data.next_page_url;
+            if (originalString != null) {
+                const explodedArray = originalString.split('?page=');
+                if (explodedArray[1] !== undefined) {
+                    setNextpage(explodedArray[1]);
+                    if (scanlist === undefined) {
+                        setScanlist(response.data.data.data);
+                        console.log(response.data.data.data);
+                    } else {
+                        const mergedArray = [...scanlist, ...response.data.data.data];
+                        const uniqueArray = mergedArray.filter((obj, index, self) => {
+                            return index === self.findIndex((o) => o.id === obj.id);
+                        });
+                        setScanlist(uniqueArray);
 
-                        }
                     }
-                } else {
-                    setScanlist(response.data.data.data);
-                    setNextpage("noPageFound");
                 }
+            } else {
+                setScanlist(response.data.data.data);
+                setNextpage("noPageFound");
+            }
 
             // }
             setIsListLoading(false);
@@ -293,18 +302,18 @@ const Home = () => {
                         </Text>
                     </TouchableOpacity>
                 </View>
-                <Text style={{ color: 'black', fontWeight: 'bold', marginTop: 12, marginLeft: 10 }}>Selected Date: {selectedDate}</Text>
                 <View style={{ paddingVertical: 15, marginTop: 15 }}>
                     <View style={{ flex: 1, paddingHorizontal: 10, flexDirection: 'row', borderTopColor: '#eee', marginTop: -15, borderTopWidth: 1, paddingTop: 10 }}>
-                        <View style={{ flex: 0.45 }}>
+                        <View style={{ flex: 0.75 }}>
                             <Text style={{ fontWeight: 'bold', color: 'dodgerblue', flex: 1, marginHorizontal: 0 }}>
                                 My Installed Tags
                             </Text>
                         </View>
-                        <View style={{ flex: 0.45 }}>
+                        <View style={{ flex: 0.25 }}>
                             <TouchableOpacity onPress={() => setDatePickerVisibility(true)}>
-                                <Text style={{ fontWeight: 'bold', color: 'dodgerblue', flex: 1, marginHorizontal: 0 }}>
-                                    Select Date</Text>
+                                <Text style={{ fontWeight: 'bold', color: '#888', flex: 1, marginHorizontal: 0 }}>
+                                    <Ionicons name="md-calendar-outline" size={22} color="dodgerblue" />  {showdateSelected}
+                                </Text>
                             </TouchableOpacity>
                             <DateTimePickerModal
                                 isVisible={isDatePickerVisible}
@@ -314,11 +323,11 @@ const Home = () => {
                             />
 
                         </View>
-                        <View style={{ flex: 0.15 }}>
+                        {/* <View style={{ flex: 0.15 }}>
                             <TouchableOpacity onPress={RefreshList} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 50, backgroundColor: 'dodgerblue' }}>
                                 <Ionicons name="md-refresh-outline" size={20} color="#fff" />
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                     </View>
                 </View>
             </ScrollView>
@@ -334,7 +343,13 @@ const Home = () => {
                                 data={scanlist}
                                 renderItem={({ item }) => <Item row={item} />}
                                 keyExtractor={item => item.id}
-                                onScroll={handleScroll} />
+                                onScroll={handleScroll}
+                                ListEmptyComponent={() => (
+                                    <View style={{ alignItems: 'center', marginTop: 20 }}>
+                                        <Text style={{ fontSize: 16, color: 'gray' }}>No scanning entries found on selected date</Text>
+                                    </View>
+                                )}
+                            />
                         )}
                 </View>
 
