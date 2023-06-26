@@ -6,7 +6,7 @@ let API = axios.create({
   timeout: 10000,
 });
 
-// Set JSON Web Token in Client to be included in all calls
+// KSet JSON Web Token in Client to be included in all calls
 export const setClientToken = token => {
   API.interceptors.request.use(function(config) {
     config.headers.Authorization = `Bearer ${token}`;
