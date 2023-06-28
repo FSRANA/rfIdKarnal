@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios client, pre-configured with baseURL
 let API = axios.create({
-  baseURL: 'https://dev.karnal-rfid.pinnacleynr.com/api/',
+  baseURL: 'https://karnal-rfid.pinnacleynr.com/api/',
   timeout: 10000,
 });
 

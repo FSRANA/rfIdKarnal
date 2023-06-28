@@ -4,6 +4,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image } from 'react-native';
 import { useRouter } from 'expo-router';
+import LogoutComponent  from '../../shared/logout';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
@@ -30,13 +31,6 @@ const Home = () => {
     const currentDate = moment().format('DD-MM-YY');
 
     const [showdateSelected, setshowdateSelected] = useState(currentDate);
-    const attemptLogout = async () => {
-        dispatch({ type: 'user/setUserData', payload: "" });
-        dispatch({ type: 'user/setToken', payload: "" });
-
-        router.push(`/`);
-    }
-
     const handleConfirm = (date) => {
         console.log(date.toISOString().split('T')[0]);
         setSelectedDate(date.toISOString().split('T')[0]); // Set the selected date
@@ -250,13 +244,7 @@ const Home = () => {
                         </Text>
                     </View>
                     <View style={{ flex: 0.2, alignItems: 'flex-end' }}>
-                        <TouchableOpacity onPress={attemptLogout} style={{ padding: 15 }}>
-                            <Ionicons name="log-out-outline" size={25} color="orange" />
-                            {/* <Image
-        source={require('../../assets/images/user.png')}
-        style={{ width:30,height:30, borderWidth:2, borderColor:"#fff", borderRadius:30 }}
-    /> */}
-                        </TouchableOpacity>
+                    <LogoutComponent/>
                     </View>
                 </View>
             </View>

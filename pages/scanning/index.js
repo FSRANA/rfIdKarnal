@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, FlatList, TextInput, Activity
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image } from 'react-native';
 import {useRouter}  from 'expo-router';
+import LogoutComponent  from '../../shared/logout';
 import { useSelector, useDispatch } from 'react-redux';
 
 import * as MyLocation from 'expo-location';
@@ -24,13 +25,6 @@ const ScanningScreen = () => {
     const userData = useSelector((state) => state.user.userData);
     const token = useSelector((state) => state.user.token);
 
-
-    const attemptLogout = async () => {
-        dispatch({ type: 'user/setUserData', payload: "" });
-        dispatch({ type: 'user/setToken', payload: "" });
-                
-        router.push(`/`);
-    }
 
     const fetchCurrentLocation =  async () => {
         let { status } = await MyLocation.requestForegroundPermissionsAsync();
@@ -165,13 +159,7 @@ const ScanningScreen = () => {
                         </Text>
                     </View>
                     <View style={{ flex:0.2, alignItems:'flex-end' }}>
-                        <TouchableOpacity onPress={attemptLogout} style={{ padding:15 }}>
-                            <Ionicons name="log-out-outline" size={25} color="orange" />
-                            {/* <Image 
-                                source={require('../../assets/images/user.png')}
-                                style={{ width:30,height:30, borderWidth:2, borderColor:"#fff", borderRadius:30 }}
-                            /> */}
-                        </TouchableOpacity>
+                       <LogoutComponent/>
                     </View>
                 </View>
             </View>
